@@ -1,0 +1,119 @@
+.testi {
+  margin: 140px 0;
+}
+
+.swiperWrap {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 48px !important;
+}
+
+.swiperWrap :global(.swiper-pagination-bullet) {
+  background: var(--gold);
+  opacity: 0.4;
+}
+
+.swiperWrap :global(.swiper-pagination-bullet-active) {
+  opacity: 1;
+}
+
+.testiGrid {
+  align-items: stretch;
+}
+
+.t {
+  padding: 56px 36px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+.t:last-child {
+  border-right: 0;
+}
+
+.t:nth-child(1) { background: linear-gradient(180deg, transparent, rgba(195, 77, 53, 0.05)); }
+.t:nth-child(2) { background: linear-gradient(180deg, transparent, rgba(184, 137, 74, 0.07)); }
+.t:nth-child(3) { background: linear-gradient(180deg, transparent, rgba(125, 150, 120, 0.06)); }
+
+.stars {
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  font-size: 12px;
+}
+
+.quote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  position: relative;
+}
+
+.quote::before {
+  content: "\201C";
+  position: absolute;
+  left: -22px;
+  top: -18px;
+  font-size: 64px;
+  color: var(--gold);
+  font-family: var(--serif);
+  line-height: 1;
+  font-style: normal;
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.av {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--gold);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nm {
+  font-family: var(--serif);
+  font-size: 18px;
+}
+
+.role {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (max-width: 980px) {
+  .testiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .t {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 40px 24px;
+  }
+
+  .t:last-child {
+    border-bottom: 0;
+  }
+}
