@@ -4,20 +4,8 @@ import { useState } from 'react';
 import type { Salon } from '@/data/salons';
 import styles from './HizmetlerPage.module.css';
 
-type Service = {
-  name: string;
-  desc: string;
-  price: string;
-  duration?: string;
-};
-
-type Category = {
-  id: string;
-  label: string;
-  icon: string;
-  intro: string;
-  services: Service[];
-};
+type Service = { name: string; desc: string; price: string; duration?: string };
+type Category = { id: string; label: string; icon: string; intro: string; services: Service[] };
 
 const CATEGORIES: Category[] = [
   {
@@ -26,37 +14,44 @@ const CATEGORIES: Category[] = [
     icon: '✂️',
     intro: 'Yüz hatlarınıza ve saç yapınıza özel olarak tasarlanan saç hizmetlerimiz, hem sağlık hem de estetik açıdan en iyi sonuçları sunar.',
     services: [
-      { name: 'Saç Kesimi', desc: 'Yüz hatlarına özel, klasik ve modern teknikleri harmanlayan profesyonel kesim.', price: '₺850', duration: '45 dk' },
-      { name: 'Fön & Şekillendirme', desc: 'Hacimli, düz veya dalgalı — istediğiniz görünüm için uzman ellerde şekillendirme.', price: '₺450', duration: '30 dk' },
-      { name: 'Renklendirme', desc: 'Tek renk, balyaj veya ombré tekniğiyle saçınıza derinlik ve ışık katın.', price: '₺2.400', duration: '2-3 saat' },
-      { name: 'Balyaj', desc: 'El boyaması tekniğiyle doğal güneş etkisi yaratan, yumuşak geçişli renk uygulaması.', price: '₺3.200', duration: '3-4 saat' },
-      { name: 'Keratin Bakımı', desc: 'Kırık ve yıpranmış saçları onaran, ipeksi parlaklık ve kalıcı yumuşaklık veren bakım.', price: '₺1.800', duration: '2 saat' },
-      { name: 'Saç Bakım Maskesi', desc: 'Onarıcı ve nemlendirici içeriklerle derin bakım. Saçın esnekliğini ve parlaklığını geri kazandırır.', price: '₺600', duration: '45 dk' },
-    ],
-  },
-  {
-    id: 'cilt',
-    label: 'Cilt Bakımı',
-    icon: '🌿',
-    intro: 'Cildinizin benzersiz ihtiyaçlarına göre kişiselleştirilen bakım protokolleriyle görünür sonuçlar elde edin.',
-    services: [
-      { name: 'Klasik Yüz Bakımı', desc: 'Derin temizlik, peeling, nemlendirme ve maske adımlarıyla cildinizi yenileyen temel bakım.', price: '₺950', duration: '60 dk' },
-      { name: 'HydraFacial', desc: 'Nemlendirme, temizlik ve serum infüzyonunu tek seansta birleştiren özel cihazlı bakım.', price: '₺2.200', duration: '75 dk' },
-      { name: 'Kimyasal Peeling', desc: 'Ölü hücreleri temizleyen, leke ve kırışıklıkları azaltan asit bazlı yüzey yenileme.', price: '₺1.400', duration: '45 dk' },
-      { name: 'Leke Tedavisi', desc: 'Güneş lekeleri, melazma ve akne izleri için hedefli serum ve teknoloji kombinasyonu.', price: '₺1.800', duration: '60 dk' },
-      { name: 'Göz Çevresi Bakımı', desc: 'İnce çizgiler ve morluklara karşı yoğun nemlendirici peptid içerikli göz bakımı.', price: '₺750', duration: '30 dk' },
+      { name: 'Kadın Saç Kesimi', desc: 'Yüz hatlarına özel klasik ve modern teknikleri harmanlayan profesyonel kesim.', price: '₺2.600', duration: '45 dk' },
+      { name: 'Çocuk Saç Kesimi', desc: 'Çocuklara özel nazik ve hızlı kesim uygulaması.', price: '₺1.400', duration: '30 dk' },
+      { name: 'Fön & Şekillendirme', desc: 'Hacimli, düz veya dalgalı — istediğiniz görünüm için uzman ellerde şekillendirme.', price: '₺1.000+', duration: '30 dk' },
+      { name: 'Saç Boyama', desc: 'Tek renk profesyonel saç boyama uygulaması.', price: '₺4.500+', duration: '90 dk' },
+      { name: 'Balayaj', desc: 'El boyaması tekniğiyle doğal güneş etkisi yaratan yumuşak geçişli renk.', price: '₺10.000+', duration: '3-4 saat' },
+      { name: 'Highlight', desc: 'İnce ya da kalın dilimlerle saçınıza doğal ışıltı katın.', price: '₺10.000+', duration: '2-3 saat' },
+      { name: 'Saç Keratini', desc: 'Yıpranmış saçları onararak ipeksi parlaklık ve kalıcı yumuşaklık sağlar.', price: '₺7.500+', duration: '2 saat' },
+      { name: 'Saç Botoksu', desc: 'Kırılgan ve elektrikli saçlar için yoğun onarım bakımı.', price: '₺5.000+', duration: '90 dk' },
+      { name: 'Gelin Saçı', desc: 'Özel gününüze özel, prova dahil profesyonel gelin saçı tasarımı.', price: 'Bilgi alın', duration: '60+ dk' },
     ],
   },
   {
     id: 'makyaj',
     label: 'Makyaj',
     icon: '💄',
-    intro: 'Gündelik zarafetten gelin görkemligine — her anınız için profesyonel makyaj sanatı.',
+    intro: 'Gündelik zarafetten gelin görkemliğine — her anınız için profesyonel makyaj sanatı.',
     services: [
-      { name: 'Günlük Makyaj', desc: 'Doğal ışıltı veya göz alıcı bakışlar için günlük ve davet makyajı.', price: '₺950', duration: '45 dk' },
-      { name: 'Gelin Makyajı', desc: 'Uzun süreli, özel gün makyajı. Provası dahil, size özel renk paleti çalışması.', price: '₺3.500', duration: '90 dk' },
-      { name: 'Gece & Davet Makyajı', desc: 'Dramatik, etkileyici ve uzun süre kalıcı davet makyajı.', price: '₺1.400', duration: '60 dk' },
-      { name: 'Airbrush Makyaj', desc: 'Kompresörle uygulanan ultra ince kaplama. Fotoğraf ve video çekimleri için ideal.', price: '₺2.000', duration: '75 dk' },
+      { name: 'Günlük & Davet Makyajı', desc: 'Doğal ışıltı veya göz alıcı bakışlar için günlük ve davet makyajı.', price: '₺5.000+', duration: '45 dk' },
+      { name: 'VIP Makyaj', desc: 'Premium ürünler ve özel tekniklerle hazırlanan üst düzey makyaj.', price: '₺8.000', duration: '60 dk' },
+      { name: 'Gelin Makyajı', desc: 'Uzun süreli, özel gün makyajı. Provası dahil, size özel renk paleti çalışması.', price: '₺15.000+', duration: '90 dk' },
+      { name: 'Damat Paketi', desc: 'Saç kesimi, sakal düzenlemesi ve bakım dahil kapsamlı damat hazırlık paketi.', price: '₺8.500', duration: '60 dk' },
+      { name: 'Airbrush Makyaj', desc: 'Kompresörle uygulanan ultra ince kaplama. Fotoğraf çekimleri için ideal.', price: '₺10.000', duration: '75 dk' },
+    ],
+  },
+  {
+    id: 'kirpik',
+    label: 'İpek Kirpik',
+    icon: '👁️',
+    intro: 'Gözlerinizi konuşturun. Hollywood\'dan klasiğe, her modelde profesyonel ipek kirpik uygulaması.',
+    services: [
+      { name: 'İpek Kirpik — Classic', desc: 'Her kirpiğe tek tel uygulanan doğal görünümlü klasik model.', price: '₺1.900', duration: '90 dk' },
+      { name: 'İpek Kirpik — Volume', desc: 'Hacimli ve dolgun görünüm için çok telli volume uygulaması.', price: '₺2.600', duration: '120 dk' },
+      { name: 'İpek Kirpik — Hybrid', desc: 'Klasik ve volume tekniklerini birleştiren doğal ama belirgin model.', price: '₺2.600', duration: '120 dk' },
+      { name: 'Hollywood / L Model', desc: 'Kıvrımlı ve kalkık, dramatik etki yaratan L model kirpik.', price: '₺3.200', duration: '150 dk' },
+      { name: 'Kedi Gözü Kirpik', desc: 'Gözleri çekici ve baygın gösteren kedi gözü kirpik tasarımı.', price: '₺3.000', duration: '120 dk' },
+      { name: 'Kirpik Lifting', desc: 'Kirpikleri yukarı kaldıran ve kıvırcıklaştıran kalıcı lift işlemi.', price: '₺2.300', duration: '60 dk' },
+      { name: 'Kirpik Boyama', desc: 'Kirpiklere kalıcı renk ve yoğunluk katan boyama işlemi.', price: '₺500', duration: '20 dk' },
+      { name: 'İpek Kirpik Çıkarma', desc: 'Mevcut ipek kirpiklerin güvenli şekilde çıkarılması.', price: '₺400', duration: '20 dk' },
     ],
   },
   {
@@ -65,24 +60,45 @@ const CATEGORIES: Category[] = [
     icon: '💅',
     intro: 'Ellerinizin ve ayaklarınızın bakımını ihmal etmeyin. Kalıcıdan natürele, sanattan klasiğe her tarz burada.',
     services: [
-      { name: 'Klasik Manikür', desc: 'Şekillendirme, kütikül bakımı ve renklendirme dahil temel manikür.', price: '₺550', duration: '45 dk' },
-      { name: 'Kalıcı Oje (Jel)', desc: '2-3 hafta kalıcılık sağlayan jel oje uygulaması. Geniş renk skalası.', price: '₺750', duration: '60 dk' },
-      { name: 'Protez Tırnak', desc: 'Akrilik veya jel ile uzatma. Kırık ve kısa tırnaklar için doğal görünümlü çözüm.', price: '₺1.200', duration: '90 dk' },
-      { name: 'Fransız Manikür', desc: 'Zamanın ötesinde klasik fransız ucu; temiz, şık ve her ortama uygun.', price: '₺850', duration: '60 dk' },
-      { name: 'Pedikür', desc: 'Ayak bakımı, ölü deri temizleme, tırnak şekillendirme ve renklendirme.', price: '₺700', duration: '60 dk' },
-      { name: 'Tırnak Sanatı', desc: 'Geometrik, çiçek, ombre veya özel tasarım. Tırnaklarınız bir tuval.', price: '₺1.000+', duration: '75 dk' },
+      { name: 'Manikür + Kalıcı Oje', desc: 'Kütikül bakımı ve el maskesi dahil kalıcı oje uygulaması.', price: '₺1.000', duration: '60 dk' },
+      { name: 'Islak Manikür Normal Oje', desc: 'Klasik ıslak manikür ve normal oje uygulaması.', price: '₺1.400', duration: '45 dk' },
+      { name: 'Jel Protez Tırnak — Orta', desc: 'Manikür ve kalıcı oje dahil orta boy jel protez tırnak.', price: '₺2.000', duration: '90 dk' },
+      { name: 'Jel Protez Tırnak — Uzun', desc: 'Manikür ve kalıcı oje dahil uzun boy jel protez tırnak.', price: '₺2.500', duration: '90 dk' },
+      { name: 'Baby Boomer Tırnak', desc: 'Pembe-beyaz geçişli doğal görünümlü baby boomer model.', price: '₺3.000', duration: '90 dk' },
+      { name: 'French Manikür', desc: 'Zamanın ötesinde klasik fransız ucu — temiz ve şık görünüm.', price: '₺400', duration: '45 dk' },
+      { name: 'Nail Art', desc: 'Geometrik, çiçek veya özel tasarım nail art çalışmaları.', price: '₺100+/tırnak', duration: '10+ dk' },
+      { name: 'Pedikür + Kalıcı Oje', desc: 'Kapsamlı ayak bakımı ve uzun süreli kalıcı oje.', price: '₺1.800', duration: '60 dk' },
+      { name: 'VIP Pedikür', desc: 'Ekstra bakım adımları ve masaj dahil premium pedikür deneyimi.', price: '₺2.000', duration: '75 dk' },
     ],
   },
   {
-    id: 'epilasyon',
-    label: 'Epilasyon',
+    id: 'lazer',
+    label: 'Lazer & Epilasyon',
     icon: '✨',
-    intro: 'Kalıcı veya geçici yöntemlerle pürüzsüz ve bakımlı bir cilt için uzman epilasyon hizmetleri.',
+    intro: 'Diyot lazer teknolojisiyle kalıcı tüy azaltma. Bölgesel uygulamalar ve avantajlı paket seçenekleri mevcuttur.',
     services: [
-      { name: 'Ağda (Bölgesel)', desc: 'Yüz, koltuk, bacak veya bikinili bölge için ağda uygulaması.', price: '₺300+', duration: '15-30 dk' },
-      { name: 'Tam Bacak Ağda', desc: 'Yumuşak veya sert ağda ile tam bacak uygulama.', price: '₺650', duration: '45 dk' },
-      { name: 'İplik Epilasyon', desc: 'Kaş şekillendirme ve yüz bölgesi için hassas iplik yöntemi.', price: '₺200', duration: '15 dk' },
-      { name: 'Lazer Epilasyon (Seans)', desc: 'Diyot lazer teknolojisiyle kalıcı tüy azaltma. Paket fiyatları için bilgi alın.', price: '₺800+', duration: '30-60 dk' },
+      { name: 'Lazer — Yüz', desc: 'Üst dudak, çene veya yüz bölgesi lazer epilasyon seansı.', price: '₺600', duration: '15 dk' },
+      { name: 'Lazer — Koltukaltı', desc: 'Koltukaltı bölgesi lazer epilasyon seansı.', price: '₺500', duration: '15 dk' },
+      { name: 'Lazer — Yarım Bacak', desc: 'Diz altı veya diz üstü yarım bacak lazer epilasyon.', price: '₺600', duration: '20 dk' },
+      { name: 'Lazer — Tüm Bacak', desc: 'Tam bacak lazer epilasyon seansı.', price: '₺1.000', duration: '40 dk' },
+      { name: 'Lazer — Tüm Vücut (Kadın)', desc: 'Tüm vücut bölgelerini kapsayan tam lazer epilasyon seansı.', price: '₺5.200', duration: '90 dk' },
+      { name: 'Lazer — Tüm Vücut (Erkek)', desc: 'Erkekler için tüm vücut lazer epilasyon seansı.', price: '₺5.900', duration: '90 dk' },
+      { name: '6 Seans Paket — Tüm Vücut (Kadın)', desc: '6 seans tüm vücut lazer epilasyon paketi — avantajlı fiyat.', price: '₺18.000' },
+      { name: '6 Seans Paket — Tüm Vücut (Erkek)', desc: '6 seans erkek tüm vücut lazer paketi.', price: '₺12.400' },
+    ],
+  },
+  {
+    id: 'mikroblading',
+    label: 'Kaş & Kalıcı Makyaj',
+    icon: '🖊️',
+    intro: 'Kaşlarınızdan dudaklarınıza kadar kalıcı makyaj ve mikroblading hizmetleriyle her gün hazır görünün.',
+    services: [
+      { name: 'Microblading / Kaş Kontur', desc: 'El tekniğiyle yapılan, doğal tüy görünümlü kalıcı kaş çizimi.', price: '₺8.500', duration: '2 saat' },
+      { name: 'Microblading Bakım', desc: 'İlk uygulamadan 4-6 hafta sonra yapılan dokunma bakımı.', price: '₺2.500', duration: '60 dk' },
+      { name: 'Kaş Alma & Şekillendirme', desc: 'İplik veya ağda yöntemiyle profesyonel kaş şekillendirme.', price: '₺1.000', duration: '20 dk' },
+      { name: 'Kaş Boyama', desc: 'Kaşlara renk ve yoğunluk katan profesyonel kaş boyama.', price: '₺700', duration: '20 dk' },
+      { name: 'Kalıcı Eyeliner', desc: 'Üst veya alt göz kenarına kalıcı eyeliner dövmesi.', price: '₺7.000', duration: '90 dk' },
+      { name: 'Dudak Kalıcı Makyaj', desc: 'Dudaklara şekil ve renk veren kalıcı makyaj uygulaması.', price: '₺7.500', duration: '2 saat' },
     ],
   },
 ];
@@ -99,7 +115,6 @@ export default function HizmetlerPage({ salon }: { salon: Salon }) {
     <main className={styles.page}>
       <div className="container">
 
-        {/* Disclaimer */}
         <div className={styles.disclaimer}>
           <span className={styles.disclaimerIcon}>ℹ️</span>
           <p>
@@ -112,7 +127,6 @@ export default function HizmetlerPage({ salon }: { salon: Salon }) {
           </p>
         </div>
 
-        {/* Header */}
         <div className={styles.header}>
           <div className="sec-num">— Hizmet Listesi</div>
           <h1 className={styles.title}>
@@ -125,7 +139,6 @@ export default function HizmetlerPage({ salon }: { salon: Salon }) {
           </p>
         </div>
 
-        {/* Category Tabs */}
         <div className={styles.tabs}>
           {CATEGORIES.map(cat => (
             <button
@@ -139,12 +152,9 @@ export default function HizmetlerPage({ salon }: { salon: Salon }) {
           ))}
         </div>
 
-        {/* Category Content */}
         <div className={styles.categorySection}>
           <div className={styles.categoryIntro}>
-            <h2 className={styles.categoryTitle}>
-              {active.icon} {active.label}
-            </h2>
+            <h2 className={styles.categoryTitle}>{active.icon} {active.label}</h2>
             <p className={styles.categoryDesc}>{active.intro}</p>
           </div>
 
@@ -162,12 +172,7 @@ export default function HizmetlerPage({ salon }: { salon: Salon }) {
                     <small>Başlangıç</small>
                     <span>{svc.price}</span>
                   </div>
-                  <a
-                    href={waUrl}
-                    target="_blank"
-                    rel="noopener"
-                    className={styles.cardCta}
-                  >
+                  <a href={waUrl} target="_blank" rel="noopener" className={styles.cardCta}>
                     Randevu Al →
                   </a>
                 </div>
@@ -176,7 +181,6 @@ export default function HizmetlerPage({ salon }: { salon: Salon }) {
           </div>
         </div>
 
-        {/* Bottom CTA */}
         <div className={styles.bottomCta}>
           <p>Fiyat veya hizmet detayları hakkında bilgi almak ister misiniz?</p>
           <a href={waUrl} target="_blank" rel="noopener" className="btn-gold">
