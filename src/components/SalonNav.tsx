@@ -1,12 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import type { Salon } from '@/data/salons';
 import styles from './Nav.module.css';
 
 export default function SalonNav({ salon }: { salon: Salon }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isHizmetler = pathname?.endsWith('/hizmetler');
+  const basePath = isHizmetler ? pathname.replace('/hizmetler', '') : pathname;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -31,12 +35,16 @@ export default function SalonNav({ salon }: { salon: Salon }) {
           <span className={styles.name}>{salon.shortTitle}</span>
         </a>
         <div className={`${styles.navLinks} ${menuOpen ? styles.open : ''}`}>
-          <a href="#hizmetler" onClick={(e) => { e.preventDefault(); scrollTo('hizmetler'); }}>Hizmetler</a>
-          <a href="#hakkimizda" onClick={(e) => { e.preventDefault(); scrollTo('hakkimizda'); }}>Hakkımızda</a>
-          <a href="#yorumlar" onClick={(e) => { e.preventDefault(); scrollTo('yorumlar'); }}>Yorumlar</a>
-          <a href="#iletisim" onClick={(e) => { e.preventDefault(); scrollTo('iletisim'); }}>İletişim</a>
+          {isHizmetler ? (
+            <a href={basePath || '/'}>Ana Sayfa</a>
+          ) : (
+            <a href="#hizmetler" onClick={(e) => { e.preventDefault(); scrollTo('hizmetler'); }}>Hizmetler</a>
+          )}
+          <a href={`${basePath}/hizmetler`}>Tüm Hizmetler</a>
+          {!isHizmetler && <a href="#hakkimizda" onClick={(e) => { e.preventDefault(); scrollTo('hakkimizda'); }}>Hakkımızda</a>}
+          {!isHizmetler && <a href="#iletisim" onClick={(e) => { e.preventDefault(); scrollTo('iletisim'); }}>İletişim</a>}
         </div>
-        <button className={styles.navCta} onClick={() => scrollTo('randevu')}>Randevu Al</button>
+        <button className={styles.navCta} onClick={() => isHizmetler ? window.location.href = basePath + '#randevu' : scrollTo('randevu')}>Randevu Al</button>
         <button
           className={styles.burger}
           aria-label="Menü"
