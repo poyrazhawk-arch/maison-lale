@@ -13,46 +13,46 @@ const services = [
     title: 'Saç Kesimi',
     desc: 'Yüz hatlarınıza özel tasarlanan, klasik ve modern teknikleri harmanlayan kesim.',
     price: '₺850',
-    img: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=900&q=85',
+    img: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=1400&q=90',
   },
   {
     num: 'N°02',
     title: 'Renklendirme',
     desc: 'Balyaj, ombré, gölge tonları — saçınıza derinlik ve ışık veren renk çalışmaları.',
     price: '₺2.400',
-    img: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=900&q=85',
+    img: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=1400&q=90',
   },
   {
     num: 'N°03',
     title: 'Keratin Bakımı',
     desc: 'Yıpranmış saçları besleyen, ipeksi parlaklık ve kalıcı yumuşaklık veren bakım.',
     price: '₺1.800',
-    img: 'https://images.unsplash.com/photo-1522337094846-8a818192de1f?auto=format&fit=crop&w=900&q=85',
+    img: 'https://images.unsplash.com/photo-1522337094846-8a818192de1f?auto=format&fit=crop&w=1400&q=90',
   },
   {
     num: 'N°04',
     title: 'Cilt Bakımı',
     desc: 'Cildinizin ihtiyaçlarına göre kişiselleştirilen derin temizlik ve aydınlatma seansları.',
     price: '₺1.250',
-    img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=900&q=85',
+    img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1400&q=90',
   },
   {
     num: 'N°05',
     title: 'Makyaj',
     desc: 'Davet, gelinlik veya gündelik — bakışınızı sade bir zarafetle ortaya çıkaran makyaj.',
     price: '₺950',
-    img: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=900&q=85',
+    img: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1400&q=90',
   },
   {
     num: 'N°06',
     title: 'Manikür',
     desc: 'Klasik bakım, jel, fransız ve sanat çalışmaları — ellerinize ait nazik bir dokunuş.',
     price: '₺550',
-    img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=900&q=85',
+    img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1400&q=90',
   },
 ];
 
-export default function Services() {
+export default function Services({ salonName }: { salonName?: string }) {
   const swiperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function Services() {
           </h2>
         </div>
         <div className="right">
-          Saçınızdan cildinize, ellerinizden bakışınıza — Maison Lale&apos;de her hizmet, sizi yansıtan bir imza haline gelir.
+          Saçınızdan cildinize, ellerinizden bakışınıza — {salonName ? `${salonName}'de` : 'salonumuzda'} her hizmet, sizi yansıtan bir imza haline gelir.
         </div>
       </div>
 

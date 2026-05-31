@@ -80,7 +80,7 @@ export default function SalonHero({ salon }: { salon: Salon }) {
         <div className={`${styles.heroImg} editorial`}>
           <div
             className={styles.ph}
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=1200&q=85')" }}
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522337094846-8a818192de1f?auto=format&fit=crop&w=1600&q=90')" }}
           ></div>
           <span className={styles.cap}>Güzellik Salonu · {salon.city}</span>
         </div>

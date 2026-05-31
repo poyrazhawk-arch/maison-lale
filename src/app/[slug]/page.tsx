@@ -40,7 +40,7 @@ export default async function SalonPage(
       <SalonNav salon={salon} />
       <SalonHero salon={salon} />
       <Marquee />
-      <Services />
+      <Services salonName={salon.shortTitle} />
       <SalonAbout salon={salon} />
       <WhatsAppBooking whatsappPhone={salon.whatsappPhone} salonName={salon.shortTitle} />
       <Testimonials />
