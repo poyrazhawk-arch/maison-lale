@@ -15,7 +15,7 @@ const testimonials = [
     avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=160&q=85',
   },
   {
-    quote: 'Düğünüm için makyajımı Maison Lale\'de yaptırdım. Sadelik içinde bir zarafet — gün boyu hiç düzeltmek zorunda kalmadığım, fotoğraflarda bile kusursuz duran bir iz bıraktı.',
+    quote: 'Düğünüm için makyajımı bu salonumda yaptırdım. Sadelik içinde bir zarafet — gün boyu hiç düzeltmek zorunda kalmadığım, fotoğraflarda bile kusursuz duran bir iz bıraktı.',
     name: 'Zeynep Demir',
     city: 'Bursa',
     avatar: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=160&q=85',

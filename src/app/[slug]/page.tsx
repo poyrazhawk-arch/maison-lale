@@ -24,6 +24,12 @@ export async function generateMetadata(
   return {
     title: `${salon.shortTitle} — ${salon.city} Güzellik Salonu`,
     description: `${salon.shortTitle}, ${salon.city} konumunda profesyonel güzellik hizmetleri. Online randevu alın.`,
+    openGraph: {
+      title: `${salon.shortTitle} — ${salon.city} Güzellik Salonu`,
+      description: `${salon.shortTitle}, ${salon.city} konumunda profesyonel güzellik hizmetleri. Online randevu alın.`,
+      images: ['https://images.unsplash.com/photo-1522337094846-8a818192de1f?auto=format&fit=crop&w=1200&q=85'],
+      type: 'website',
+    },
   };
 }
 

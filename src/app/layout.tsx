@@ -7,6 +7,7 @@ import SmoothScroll from '@/components/SmoothScroll';
 export const metadata: Metadata = {
   title: 'Maison Lale — Kuaför & Güzellik Salonu, İstanbul',
   description: "Nişantaşı'nın sessiz bir köşesinde, sekiz uzman stilist ve seçilmiş doğal ürünlerle güzellik ritüeli. Saç kesimi, renklendirme, cilt bakımı, makyaj ve manikür.",
+  metadataBase: new URL('https://maison-lale.vercel.app'),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

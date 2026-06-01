@@ -1,6 +1,7 @@
 'use client';
 
 import type { Salon } from '@/data/salons';
+import { locative } from '@/lib/turkish';
 import styles from './Hero.module.css';
 
 export default function SalonHero({ salon }: { salon: Salon }) {
@@ -39,7 +40,7 @@ export default function SalonHero({ salon }: { salon: Salon }) {
         </h1>
 
         <p className={styles.heroLede}>
-          {salon.city}&apos;nde profesyonel güzellik hizmetleri. Saç kesimi, renklendirme, cilt bakımı, makyaj ve daha fazlası için hemen randevu alın.
+          {salon.city}{locative(salon.city)} profesyonel güzellik hizmetleri. Saç kesimi, renklendirme, cilt bakımı, makyaj ve daha fazlası için hemen randevu alın.
         </p>
 
         <div className={styles.heroMeta}>
