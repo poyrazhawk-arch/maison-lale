@@ -1,13 +1,15 @@
 /**
- * send.js — CSV'deki güzellik salonlarına otomatik WhatsApp mesajı gönderir.
+ * send.js — Baileys tabanlı WhatsApp mesaj gönderici
+ * Chrome gerektirmez, otomatik yeniden bağlanır, session kaydeder.
  *
  * Kullanım:
- *   node send.js --limit 15
- *   node send.js --input data/salonlar.csv --limit 20
+ *   node send.js --input data/salonlar.csv --limit 40
  */
 
-const { Client, LocalAuth } = require('whatsapp-web.js');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
+const { Boom } = require('@hapi/boom');
 const qrcode = require('qrcode-terminal');
+const pino = require('pino');
 const fs = require('fs');
 const csv = require('csv-parser');
 const winston = require('winston');
@@ -27,23 +29,21 @@ const logger = winston.createLogger({
     ]
 });
 
-// --- Ayarlar (buradan düzenle) ---
+// --- Ayarlar ---
 const CONFIG = {
     inputFile:   process.argv[3] || 'data/salonlar.csv',
     limit:       parseInt(process.argv[5]) || 15,
-    delayMin:    90,    // saniye — çok düşük tutma, ban yiyersin
+    delayMin:    90,
     delayMax:    180,
-    // Her salon için demo linki: nixtagency.com/SALON-SLUG formatında üret
-    baseDemoUrl: 'https://maison-lale.vercel.app',  // ✅ canlı
+    baseDemoUrl: 'https://maison-lale.vercel.app',
     senderName:  'Ahmet',
     agencyName:  'Nixt Ajansı',
+    authDir:     'data/auth',
 };
 
-// --- Mesaj şablonları (3 farklı — spam filtresi için) ---
+// --- Mesaj şablonları ---
 function generateMessage(name, city, demoUrl) {
-    // Salon adını kısalt (uzun isimler var CSV'de)
     const shortName = name.split(/[|\-–]/)[0].trim().slice(0, 40);
-
     const templates = [
         `Merhaba! ${shortName} sayfanızı inceledim, çok güzel çalışmalarınız var 🙏\n\n${city}'deki salonunuz için bir demo web sitesi hazırladım. Randevu sistemi ve WhatsApp entegrasyonu dahil.\n\n👉 ${demoUrl}\n\n⚠️ Not: Sitedeki hizmetler ve fiyatlar şu an örnek. Siz alırsanız kendi hizmetleriniz, fiyatlarınız ve fotoğraflarınızla tamamen güncelliyoruz.\n\n${CONFIG.senderName} — ${CONFIG.agencyName}`,
 
@@ -51,17 +51,16 @@ function generateMessage(name, city, demoUrl) {
 
         `Merhaba! ${shortName} için küçük bir sürprizim var 🎁\n\nSalonunuza özel bir web sitesi tasarladım. Beğenirseniz konuşuruz!\n\nWhatsApp randevu sistemi dahil 👇\n${demoUrl}\n\n💡 Hizmetler ve fiyatlar şu an demo içerik — sizi alırsak her şey sizin bilgilerinizle güncellenir.\n\n${CONFIG.senderName}`,
     ];
-
     return templates[Math.floor(Math.random() * templates.length)];
 }
 
-// --- Telefonu WhatsApp formatına çevir ---
+// --- Telefonu Baileys formatına çevir ---
 function formatPhone(phone) {
     let cleaned = String(phone).replace(/[\s\-\(\)\+]/g, '');
-    if (cleaned.startsWith('90') && cleaned.length === 12) return cleaned + '@c.us';
-    if (cleaned.startsWith('0')) return '90' + cleaned.slice(1) + '@c.us';
-    if (cleaned.length === 10) return '90' + cleaned + '@c.us';
-    return cleaned + '@c.us';
+    if (cleaned.startsWith('90') && cleaned.length === 12) return cleaned + '@s.whatsapp.net';
+    if (cleaned.startsWith('0')) return '90' + cleaned.slice(1) + '@s.whatsapp.net';
+    if (cleaned.length === 10) return '90' + cleaned + '@s.whatsapp.net';
+    return cleaned + '@s.whatsapp.net';
 }
 
 // --- Salon adından URL slug üret ---
@@ -106,35 +105,15 @@ function saveSent(set) {
     fs.writeFileSync('data/sent.json', JSON.stringify([...set], null, 2));
 }
 
-// --- Ana akış ---
-async function main() {
-    const client = new Client({
-        authStrategy: new LocalAuth({ clientId: 'nixt-outreach' }),
-        puppeteer: {
-            headless: true,
-            executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        }
-    });
-
-    client.on('qr', (qr) => {
-        console.log('\n📱 WhatsApp\'ı aç → Bağlı Cihazlar → QR Kodu Tara:\n');
-        qrcode.generate(qr, { small: true });
-    });
-
-    await new Promise((resolve) => {
-        client.on('ready', () => { logger.info('WhatsApp hazır!'); resolve(); });
-        client.initialize();
-    });
-
+// --- Mesaj gönderme döngüsü ---
+async function sendMessages(sock) {
     const allLeads = await loadLeads(CONFIG.inputFile);
     const sent     = loadSent();
     const pending  = allLeads.filter(l => !sent.has(l.phone));
 
-    logger.info(`Toplam: ${allLeads.length} | Bekleyen: ${pending.length} | Bugünkü limit: ${CONFIG.limit}`);
+    logger.info(`Toplam: ${allLeads.length} | Bekleyen: ${pending.length} | Limit: ${CONFIG.limit}`);
 
     let count = 0;
-
     for (const lead of pending) {
         if (count >= CONFIG.limit) {
             logger.info(`Limit doldu (${CONFIG.limit}). Yarın devam et.`);
@@ -142,12 +121,12 @@ async function main() {
         }
 
         try {
-            const chatId  = formatPhone(lead.phone);
+            const jid     = formatPhone(lead.phone);
             const slug    = toSlug(lead.name);
             const demoUrl = `${CONFIG.baseDemoUrl}/${slug}`;
             const message = generateMessage(lead.name, lead.city, demoUrl);
 
-            await client.sendMessage(chatId, message);
+            await sock.sendMessage(jid, { text: message });
 
             sent.add(lead.phone);
             saveSent(sent);
@@ -160,21 +139,77 @@ async function main() {
             await new Promise(r => setTimeout(r, delay));
 
         } catch (err) {
-            logger.error(`❌ Hata (${lead.phone}): ${err.message}`);
-            if (err.message.includes('detached Frame') || err.message.includes('Session closed') || err.message.includes('Target closed')) {
-                logger.error('Bağlantı koptu. Script durduruluyor — yeniden başlat.');
-                break;
+            const msg = err.message || '';
+            logger.error(`❌ Hata (${lead.phone}): ${msg}`);
+
+            if (msg.includes('Connection Closed') || msg.includes('timed out') || msg.includes('Stream Errored')) {
+                logger.error('Bağlantı koptu, yeniden bağlanılıyor...');
+                return false; // reconnect sinyali
             }
-            if (err.message.includes('No LID') || err.message.includes('not a user') || err.message.includes('invalid wid')) {
+            if (msg.includes('No LID') || msg.includes('not a user') || msg.includes('invalid wid') || msg.includes('Bad Request')) {
                 logger.warn(`⚠️ WhatsApp yok, atlanıyor: ${lead.phone}`);
                 continue;
             }
-            await new Promise(r => setTimeout(r, 15000));
+            await new Promise(r => setTimeout(r, 5000));
         }
     }
 
-    logger.info(`\n📊 Bitti: ${count} mesaj gönderildi. Toplam gönderilen: ${sent.size}`);
-    await client.destroy();
+    logger.info(`\n📊 Bitti: ${count} mesaj gönderildi. Toplam: ${sent.size}`);
+    return true; // tamamlandı
 }
 
-main().catch(console.error);
+// --- Ana bağlantı (otomatik yeniden bağlanır) ---
+let isRunning = false;
+
+async function connectAndSend() {
+    fs.mkdirSync(CONFIG.authDir, { recursive: true });
+    fs.mkdirSync('data', { recursive: true });
+
+    const { state, saveCreds } = await useMultiFileAuthState(CONFIG.authDir);
+    const { version } = await fetchLatestBaileysVersion();
+
+    const sock = makeWASocket({
+        version,
+        auth: state,
+        printQRInTerminal: false,
+        logger: pino({ level: 'silent' }),
+        browser: ['Chrome (Linux)', 'Chrome', '120.0.0.0'],
+    });
+
+    sock.ev.on('creds.update', saveCreds);
+
+    sock.ev.on('connection.update', async ({ connection, lastDisconnect, qr }) => {
+        if (qr) {
+            console.log('\n📱 WhatsApp\'ı aç → Bağlı Cihazlar → QR Kodu Tara:\n');
+            qrcode.generate(qr, { small: true });
+        }
+
+        if (connection === 'close') {
+            isRunning = false;
+            const statusCode = (lastDisconnect?.error instanceof Boom)
+                ? lastDisconnect.error.output.statusCode
+                : 0;
+
+            if (statusCode === DisconnectReason.loggedOut) {
+                logger.error('Oturum kapandı. Auth siliniyor, QR ile yeniden giriş yap.');
+                fs.rmSync(CONFIG.authDir, { recursive: true, force: true });
+                setTimeout(connectAndSend, 3000);
+            } else {
+                logger.warn('Bağlantı koptu, 5sn sonra yeniden bağlanıyor...');
+                setTimeout(connectAndSend, 5000);
+            }
+        }
+
+        if (connection === 'open' && !isRunning) {
+            isRunning = true;
+            logger.info('WhatsApp hazır!');
+            const done = await sendMessages(sock);
+            if (done) {
+                await sock.logout();
+                process.exit(0);
+            }
+        }
+    });
+}
+
+connectAndSend().catch(console.error);

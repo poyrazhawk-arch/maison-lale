@@ -1,0 +1,17 @@
+{
+  "name": "whatsapp-outreach",
+  "version": "2.0.0",
+  "description": "Güzellik salonlarına WhatsApp DM otomasyonu — Baileys tabanlı",
+  "main": "send.js",
+  "scripts": {
+    "send": "node send.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "@hapi/boom": "^10.0.1",
+    "pino": "^8.21.0",
+    "qrcode-terminal": "^0.12.0",
+    "csv-parser": "^3.0.0",
+    "winston": "^3.11.0"
+  }
+}
