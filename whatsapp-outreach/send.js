@@ -165,6 +165,10 @@ async function main() {
                 logger.error('Bağlantı koptu. Script durduruluyor — yeniden başlat.');
                 break;
             }
+            if (err.message.includes('No LID') || err.message.includes('not a user') || err.message.includes('invalid wid')) {
+                logger.warn(`⚠️ WhatsApp yok, atlanıyor: ${lead.phone}`);
+                continue;
+            }
             await new Promise(r => setTimeout(r, 15000));
         }
     }
