@@ -161,6 +161,10 @@ async function main() {
 
         } catch (err) {
             logger.error(`❌ Hata (${lead.phone}): ${err.message}`);
+            if (err.message.includes('detached Frame') || err.message.includes('Session closed') || err.message.includes('Target closed')) {
+                logger.error('Bağlantı koptu. Script durduruluyor — yeniden başlat.');
+                break;
+            }
             await new Promise(r => setTimeout(r, 15000));
         }
     }
