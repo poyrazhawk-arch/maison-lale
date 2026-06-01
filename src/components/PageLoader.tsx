@@ -12,24 +12,18 @@ export default function PageLoader() {
     if (!el) return;
 
     const tl = gsap.timeline();
-    tl.from(el.querySelector(`.${styles.text}`), {
+    tl.to(el, {
       opacity: 0,
-      y: 30,
-      duration: 0.9,
-      ease: 'power3.out',
-    })
-      .to(el, {
-        opacity: 0,
-        duration: 0.5,
-        delay: 0.4,
-        ease: 'power2.in',
-        onComplete: () => { el.style.display = 'none'; },
-      });
+      duration: 0.4,
+      delay: 1.1,
+      ease: 'power2.in',
+      onComplete: () => { el.style.display = 'none'; },
+    });
   }, []);
 
   return (
     <div ref={loaderRef} className={styles.loader}>
-      <span className={styles.text}>Maison <em>Lale</em></span>
+      <div className={styles.bar}><div className={styles.barFill}></div></div>
     </div>
   );
 }
