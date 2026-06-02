@@ -27,7 +27,7 @@
   background-size: cover;
   background-position: center;
   box-shadow: 0 30px 70px -30px rgba(31, 26, 20, 0.5);
-  border-radius: 600px 600px 4px 4px;
+  border-radius: 16px;
 }
 
 .label {
@@ -96,6 +96,27 @@
   line-height: 1.8;
   color: var(--ink-2);
   margin: 0 0 18px;
+  max-width: 520px;
+}
+
+.infoItem {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  margin: 0 0 8px;
+}
+
+.infoHours {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
   max-width: 520px;
 }
 

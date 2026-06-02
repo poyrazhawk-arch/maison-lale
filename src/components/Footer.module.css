@@ -54,8 +54,9 @@
 
 .footCol a,
 .footCol li {
-  font-family: var(--serif);
-  font-size: 18px;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.7;
   color: var(--ink-2);
   transition: color 0.25s ease;
 }

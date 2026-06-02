@@ -28,16 +28,18 @@ export default function SalonAbout({ salon }: { salon: Salon }) {
             {salon.shortTitle}, {salon.city} konumunda müşterilerine en kaliteli güzellik hizmetlerini sunmaktadır. Uzman ekibimizle saç, cilt, makyaj ve daha fazlası için buradayız.
           </p>
           {salon.street && (
-            <p>
-              📍 {salon.street}{salon.neighborhood ? `, ${salon.neighborhood}` : ''}, {salon.city}
+            <p className={styles.infoItem}>
+              {salon.street}{salon.neighborhood ? `, ${salon.neighborhood}` : ''}, {salon.city}
             </p>
           )}
           {salon.phone && (
-            <p>📞 <a href={`tel:${salon.phone}`} style={{ color: 'var(--gold-2)' }}>{salon.phone}</a></p>
+            <p className={styles.infoItem}>
+              <a href={`tel:${salon.phone}`} style={{ color: 'var(--gold-2)' }}>{salon.phone}</a>
+            </p>
           )}
 
           {hoursDisplay && (
-            <div className={styles.sig} style={{ fontSize: '16px', fontStyle: 'normal', fontFamily: 'var(--sans)', letterSpacing: '.04em' }}>
+            <div className={styles.infoHours}>
               {hoursDisplay}
             </div>
           )}
@@ -85,5 +87,5 @@ function formatHours(hours: Salon['hours']): string {
     }
     i = j;
   }
-  return '🕐 ' + parts.join(' · ');
+  return parts.join(' · ');
 }
