@@ -5,16 +5,10 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import "@/styles/appointments.css";
 
-interface Appointment {
-  id: number;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  notes?: string;
-  appointmentDate: string;
-  appointmentTime: string;
-  status: string;
-  createdAt: string;
+interface CapacityInfo {
+  available: number;
+  total: number;
+  status: "empty" | "partial" | "full";
 }
 
 const DAYS_OF_WEEK = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
@@ -28,6 +22,7 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [capacityInfo, setCapacityInfo] = useState<Record<string, CapacityInfo>>({});
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -57,12 +52,27 @@ export default function AppointmentsPage() {
     calendarDays.push(i);
   }
 
+  // Load capacity info for current month
+  useEffect(() => {
+    fetchCapacityInfo(currentDate.getFullYear(), currentDate.getMonth());
+  }, [currentDate]);
+
   // Fetch available slots when date is selected
   useEffect(() => {
     if (selectedDate) {
       fetchAvailableSlots(selectedDate);
     }
   }, [selectedDate]);
+
+  const fetchCapacityInfo = async (year: number, month: number) => {
+    try {
+      const response = await fetch(`/api/appointments/capacity?year=${year}&month=${month}`);
+      const data = await response.json();
+      setCapacityInfo(data);
+    } catch (error) {
+      console.error("Kapasite bilgisi getirilemedi:", error);
+    }
+  };
 
   const fetchAvailableSlots = async (date: string) => {
     try {
@@ -122,6 +132,8 @@ export default function AppointmentsPage() {
         setSelectedDate(null);
         setSelectedTime(null);
         setAvailableSlots([]);
+        // Refresh capacity info
+        fetchCapacityInfo(currentDate.getFullYear(), currentDate.getMonth());
       } else {
         setMessage({ type: "error", text: "Randevu oluşturulamadı" });
       }
@@ -146,6 +158,20 @@ export default function AppointmentsPage() {
           <div className="appointments-header">
             <h1>Randevu Takvimi</h1>
             <p>Uygun bir tarih ve saat seçerek randevunuzu oluşturun</p>
+            <div className="capacity-legend">
+              <div className="legend-item">
+                <div className="legend-color available"></div>
+                <span>Uygun</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color partial"></div>
+                <span>Kısmen Dolu</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color full"></div>
+                <span>Tamamen Dolu</span>
+              </div>
+            </div>
           </div>
 
           <div className="appointments-content">
@@ -172,17 +198,29 @@ export default function AppointmentsPage() {
               </div>
 
               <div className="calendar-days">
-                {calendarDays.map((day, index) => (
-                  <div
-                    key={index}
-                    className={`calendar-day ${day ? "active" : "empty"} ${
-                      selectedDate === `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}` ? "selected" : ""
-                    }`}
-                    onClick={() => day && handleDateClick(day)}
-                  >
-                    {day}
-                  </div>
-                ))}
+                {calendarDays.map((day, index) => {
+                  if (!day) {
+                    return <div key={index} className="calendar-day empty"></div>;
+                  }
+
+                  const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                  const capacity = capacityInfo[dateStr];
+                  const isSelected = selectedDate === dateStr;
+
+                  return (
+                    <div
+                      key={index}
+                      className={`calendar-day active ${
+                        capacity?.status === "full" ? "full" : capacity?.status === "partial" ? "partial" : "available"
+                      } ${isSelected ? "selected" : ""}`}
+                      onClick={() => handleDateClick(day)}
+                      title={`${capacity ? `${capacity.available}/${capacity.total} uygun` : "Bilgi yükleniyor..."}`}
+                    >
+                      <div className="day-number">{day}</div>
+                      {capacity && <div className="day-capacity">{capacity.available}/{capacity.total}</div>}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -201,7 +239,7 @@ export default function AppointmentsPage() {
 
                 {availableSlots.length > 0 && (
                   <div className="form-group">
-                    <label>Saat Seçiniz</label>
+                    <label>Saat Seçiniz ({availableSlots.length} uygun saat)</label>
                     <div className="time-slots">
                       {availableSlots.map((slot) => (
                         <button
@@ -214,6 +252,12 @@ export default function AppointmentsPage() {
                         </button>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {selectedDate && availableSlots.length === 0 && (
+                  <div className="form-group">
+                    <p className="no-slots">Bu tarihte uygun saat bulunmamaktadır.</p>
                   </div>
                 )}
 
