@@ -22,14 +22,26 @@ interface WorkingHours {
   isActive: number;
 }
 
+interface CapacityInfo {
+  available: number;
+  total: number;
+  status: "empty" | "partial" | "full";
+}
+
 const DAYS = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+const MONTHS = [
+  "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
+];
 
 export default function AdminPanel() {
   const [adminToken, setAdminToken] = useState<string | null>(null);
   const [password, setPassword] = useState("");
-  const [activeTab, setActiveTab] = useState("appointments");
+  const [activeTab, setActiveTab] = useState("calendar");
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
+  const [capacityInfo, setCapacityInfo] = useState<Record<string, CapacityInfo>>({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -38,8 +50,16 @@ export default function AdminPanel() {
     if (adminToken) {
       loadAppointments();
       loadWorkingHours();
+      loadCapacityInfo();
     }
   }, [adminToken]);
+
+  // Reload capacity when month changes
+  useEffect(() => {
+    if (adminToken) {
+      loadCapacityInfo();
+    }
+  }, [currentDate, adminToken]);
 
   const loadAppointments = async () => {
     try {
@@ -58,6 +78,18 @@ export default function AdminPanel() {
       setWorkingHours(data);
     } catch (error) {
       console.error("Çalışma saatlerini yükleme hatası:", error);
+    }
+  };
+
+  const loadCapacityInfo = async () => {
+    try {
+      const response = await fetch(
+        `/api/appointments/capacity?year=${currentDate.getFullYear()}&month=${currentDate.getMonth()}`
+      );
+      const data = await response.json();
+      setCapacityInfo(data);
+    } catch (error) {
+      console.error("Kapasite bilgisi getirilemedi:", error);
     }
   };
 
@@ -104,6 +136,7 @@ export default function AdminPanel() {
 
       if (response.ok) {
         loadAppointments();
+        loadCapacityInfo();
         setMessage({ type: "success", text: "Durum güncellendi" });
       }
     } catch (error) {
@@ -130,12 +163,37 @@ export default function AdminPanel() {
 
       if (response.ok) {
         loadWorkingHours();
+        loadCapacityInfo();
         setMessage({ type: "success", text: "Çalışma saatleri güncellendi" });
       }
     } catch (error) {
       console.error("Çalışma saatleri güncelleme hatası:", error);
       setMessage({ type: "error", text: "Güncelleme başarısız" });
     }
+  };
+
+  // Calendar helpers
+  const getDaysInMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
+
+  const calendarDays = [];
+  const daysInMonth = getDaysInMonth(currentDate);
+  const firstDay = getFirstDayOfMonth(currentDate);
+
+  for (let i = 0; i < firstDay; i++) {
+    calendarDays.push(null);
+  }
+  for (let i = 1; i <= daysInMonth; i++) {
+    calendarDays.push(i);
+  }
+
+  const getAppointmentsForDate = (dateStr: string) => {
+    return appointments.filter((a) => a.appointmentDate === dateStr);
   };
 
   if (!adminToken) {
@@ -185,6 +243,12 @@ export default function AdminPanel() {
 
       <div className="admin-tabs">
         <button
+          className={`tab-btn ${activeTab === "calendar" ? "active" : ""}`}
+          onClick={() => setActiveTab("calendar")}
+        >
+          Takvim
+        </button>
+        <button
           className={`tab-btn ${activeTab === "appointments" ? "active" : ""}`}
           onClick={() => setActiveTab("appointments")}
         >
@@ -201,6 +265,76 @@ export default function AdminPanel() {
       {message && (
         <div className={`message ${message.type}`}>
           {message.text}
+        </div>
+      )}
+
+      {/* Calendar Tab */}
+      {activeTab === "calendar" && (
+        <div className="admin-content">
+          <div className="calendar-admin-wrapper">
+            <div className="calendar-header">
+              <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}>
+                ←
+              </button>
+              <h2>
+                {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
+              </h2>
+              <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}>
+                →
+              </button>
+            </div>
+
+            <div className="calendar-legend-admin">
+              <div className="legend-item">
+                <div className="legend-color available"></div>
+                <span>Uygun</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color partial"></div>
+                <span>Kısmen Dolu</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color full"></div>
+                <span>Tamamen Dolu</span>
+              </div>
+            </div>
+
+            <div className="calendar-weekdays">
+              {DAYS.map((day) => (
+                <div key={day} className="weekday">
+                  {day.substring(0, 3)}
+                </div>
+              ))}
+            </div>
+
+            <div className="calendar-days-admin">
+              {calendarDays.map((day, index) => {
+                if (!day) {
+                  return <div key={index} className="calendar-day-admin empty"></div>;
+                }
+
+                const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                const capacity = capacityInfo[dateStr];
+                const dayAppointments = getAppointmentsForDate(dateStr);
+
+                return (
+                  <div
+                    key={index}
+                    className={`calendar-day-admin ${
+                      capacity?.status === "full" ? "full" : capacity?.status === "partial" ? "partial" : "available"
+                    }`}
+                    title={`${dateStr}: ${dayAppointments.length} randevu`}
+                  >
+                    <div className="day-number">{day}</div>
+                    <div className="day-info">
+                      <div className="capacity">{capacity?.available || 0}/{capacity?.total || 0}</div>
+                      <div className="appointments-count">{dayAppointments.length} randevu</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
 

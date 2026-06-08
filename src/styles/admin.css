@@ -149,6 +149,7 @@
   display: flex;
   gap: 16px;
   border-bottom: 1px solid var(--line);
+  overflow-x: auto;
 }
 
 .tab-btn {
@@ -164,6 +165,7 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .tab-btn:hover {
@@ -201,6 +203,189 @@
   background: #FFEBEE;
   color: #C62828;
   border: 1px solid #FFCDD2;
+}
+
+/* Calendar Admin */
+.calendar-admin-wrapper {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.calendar-header h2 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0;
+  color: var(--ink);
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--gold);
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+}
+
+.calendar-header button:hover {
+  color: var(--gold-2);
+}
+
+.calendar-legend-admin {
+  display: flex;
+  justify-content: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-color.available {
+  background: #E8F5E9;
+  border: 1px solid #4CAF50;
+}
+
+.legend-color.partial {
+  background: #FFF3E0;
+  border: 1px solid #FF9800;
+}
+
+.legend-color.full {
+  background: #FFEBEE;
+  border: 1px solid #F44336;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.weekday {
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 8px 0;
+  text-transform: uppercase;
+}
+
+.calendar-days-admin {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day-admin {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink);
+  background: white;
+  transition: all 0.3s ease;
+  padding: 8px;
+  text-align: center;
+}
+
+.calendar-day-admin .day-number {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.calendar-day-admin .day-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.calendar-day-admin .capacity {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.calendar-day-admin .appointments-count {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.calendar-day-admin.available {
+  background: #E8F5E9;
+  border-color: #4CAF50;
+}
+
+.calendar-day-admin.available:hover {
+  border-color: #4CAF50;
+  background: #C8E6C9;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+.calendar-day-admin.partial {
+  background: #FFF3E0;
+  border-color: #FF9800;
+}
+
+.calendar-day-admin.partial:hover {
+  border-color: #FF9800;
+  background: #FFE0B2;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+}
+
+.calendar-day-admin.full {
+  background: #FFEBEE;
+  border-color: #F44336;
+  opacity: 0.8;
+}
+
+.calendar-day-admin.full:hover {
+  border-color: #F44336;
+  background: #FFCDD2;
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+}
+
+.calendar-day-admin.empty {
+  background: var(--cream-3);
+  cursor: default;
+  border-color: transparent;
 }
 
 /* Appointments List */
@@ -393,5 +578,23 @@
 
   .working-hours-grid {
     grid-template-columns: 1fr;
+  }
+
+  .calendar-admin-wrapper {
+    padding: 16px;
+  }
+
+  .calendar-day-admin {
+    font-size: 10px;
+    padding: 6px;
+  }
+
+  .calendar-day-admin .day-number {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .calendar-legend-admin {
+    gap: 12px;
   }
 }
