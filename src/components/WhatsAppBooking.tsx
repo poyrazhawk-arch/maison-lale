@@ -50,8 +50,19 @@ export default function WhatsAppBooking({ whatsappPhone, salonName }: Props) {
               Sizi <em style={{ color: 'var(--gold)' }}>bekliyoruz.</em>
             </h2>
           </div>
-          <div className="right" style={{ color: 'rgba(244,236,220,0.7)' }}>
+          <div className="right" style={{ color: 'rgba(244,236,220,0.7)', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
             Formu doldurun; randevu detaylarınız WhatsApp üzerinden anında iletilsin.
+            <a
+              href="/randevular"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase',
+                color: 'var(--gold)', borderBottom: '1px solid rgba(184,137,74,0.4)',
+                paddingBottom: '3px', transition: 'border-color 0.25s',
+              }}
+            >
+              Online Takvimden Randevu Al →
+            </a>
           </div>
         </div>
 

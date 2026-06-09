@@ -11,7 +11,8 @@ interface CapacityInfo {
   status: "empty" | "partial" | "full";
 }
 
-const DAYS_OF_WEEK = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+// Hafta Pazartesi başlar (Türkiye standardı)
+const DAYS_OF_WEEK = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
 const MONTHS = [
   "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
   "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
@@ -32,13 +33,18 @@ export default function AppointmentsPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   // Get calendar days
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };
 
+  // Pazartesi = 0 offset için: Pazar(0)→6, Pazartesi(1)→0, Salı(2)→1...
   const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    const day = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+    return (day + 6) % 7;
   };
 
   const calendarDays = [];
@@ -204,17 +210,28 @@ export default function AppointmentsPage() {
                   }
 
                   const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                  const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                  const isPast = dayDate < today;
                   const capacity = capacityInfo[dateStr];
                   const isSelected = selectedDate === dateStr;
+                  const isFull = capacity?.status === "full";
+
+                  if (isPast) {
+                    return (
+                      <div key={index} className="calendar-day past">
+                        <div className="day-number">{day}</div>
+                      </div>
+                    );
+                  }
 
                   return (
                     <div
                       key={index}
                       className={`calendar-day active ${
-                        capacity?.status === "full" ? "full" : capacity?.status === "partial" ? "partial" : "available"
-                      } ${isSelected ? "selected" : ""}`}
-                      onClick={() => handleDateClick(day)}
-                      title={`${capacity ? `${capacity.available}/${capacity.total} uygun` : "Bilgi yükleniyor..."}`}
+                        isFull ? "full" : capacity?.status === "partial" ? "partial" : "available"
+                      } ${isSelected ? "selected" : ""} ${isFull ? "disabled" : ""}`}
+                      onClick={() => !isFull && handleDateClick(day)}
+                      title={capacity ? `${capacity.available}/${capacity.total} uygun saat` : ""}
                     >
                       <div className="day-number">{day}</div>
                       {capacity && <div className="day-capacity">{capacity.available}/{capacity.total}</div>}
