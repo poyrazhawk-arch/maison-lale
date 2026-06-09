@@ -200,6 +200,19 @@
   border-color: transparent;
 }
 
+.calendar-day.past {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.calendar-day.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .calendar-day.selected {
   background: var(--gold);
   color: white;
