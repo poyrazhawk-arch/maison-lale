@@ -59,7 +59,7 @@ export function initializeData() {
     systemSettings = {
       appointmentDurationMinutes: 60,
       dailyCapacity: 10,
-      adminPassword: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36P4/KFm", // admin123
+      adminPassword: "$2b$10$Zlsm/2bzIiZpsrCS7Yqsr.bBECrn19H0c8SG2uOJkF0f1pQgHv7Ry", // admin123
     };
   }
 }
