@@ -44,10 +44,10 @@ export default function SalonHero({ salon }: { salon: Salon }) {
         </p>
 
         <div className={styles.heroMeta}>
-          <button className="btn-gold" onClick={() => scrollTo('randevu')}>
+          <a className="btn-gold" href={`/randevular?salon=${encodeURIComponent(salon.shortTitle)}`}>
             Randevu Al
             <span className="arrow"></span>
-          </button>
+          </a>
           <button className="btn-ghost" onClick={() => scrollTo('hizmetler')}>Hizmetleri Keşfet</button>
         </div>
 

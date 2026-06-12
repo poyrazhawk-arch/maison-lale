@@ -44,7 +44,7 @@ export default function SalonNav({ salon }: { salon: Salon }) {
           {!isHizmetler && <a href="#hakkimizda" onClick={(e) => { e.preventDefault(); scrollTo('hakkimizda'); }}>Hakkımızda</a>}
           {!isHizmetler && <a href="#iletisim" onClick={(e) => { e.preventDefault(); scrollTo('iletisim'); }}>İletişim</a>}
         </div>
-        <button className={styles.navCta} onClick={() => isHizmetler ? window.location.href = basePath + '#randevu' : scrollTo('randevu')}>Randevu Al</button>
+        <a className={styles.navCta} href={`/randevular?salon=${encodeURIComponent(salon.shortTitle)}`}>Randevu Al</a>
         <button
           className={styles.burger}
           aria-label="Menü"
