@@ -32,7 +32,7 @@ export default function Nav() {
           <a href="#yorumlar" onClick={(e) => { e.preventDefault(); scrollTo('yorumlar'); }}>Yorumlar</a>
           <a href="#iletisim" onClick={(e) => { e.preventDefault(); scrollTo('iletisim'); }}>İletişim</a>
         </div>
-        <button className={styles.navCta} onClick={() => scrollTo('randevu')}>Randevu Al</button>
+        <a className={styles.navCta} href="/randevular">Randevu Al</a>
         <button
           className={styles.burger}
           aria-label="Menü"

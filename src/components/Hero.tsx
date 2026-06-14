@@ -75,10 +75,10 @@ export default function Hero() {
         </p>
 
         <div className={styles.heroMeta}>
-          <button className="btn-gold" onClick={() => scrollTo('randevu')}>
+          <a className="btn-gold" href="/randevular">
             Randevu Al
             <span className="arrow"></span>
-          </button>
+          </a>
           <button className="btn-ghost" onClick={() => scrollTo('hizmetler')}>Hizmetleri Keşfet</button>
         </div>
 
