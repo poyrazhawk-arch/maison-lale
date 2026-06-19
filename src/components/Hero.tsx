@@ -36,7 +36,7 @@ export default function Hero() {
         const target = parseFloat(el.dataset.count || '0');
         const isFloat = !Number.isInteger(target);
         const suffix = el.dataset.suffix || '';
-        gsap.from({ val: 0 }, {
+        gsap.to({ val: 0 }, {
           val: target,
           duration: 2,
           ease: 'power1.out',
