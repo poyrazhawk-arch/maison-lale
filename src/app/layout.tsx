@@ -1,19 +1,19 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Inter } from 'next/font/google';
+import { Bodoni_Moda, Plus_Jakarta_Sans } from 'next/font/google';
 import '@/styles/globals.css';
 import PageLoader from '@/components/PageLoader';
 import CustomCursor from '@/components/CustomCursor';
 import SmoothScroll from '@/components/SmoothScroll';
 
-const cormorantGaramond = Cormorant_Garamond({
+const bodoniModa = Bodoni_Moda({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
   variable: '--font-serif',
   display: 'swap',
 });
 
-const inter = Inter({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600'],
   variable: '--font-sans',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={`${cormorantGaramond.variable} ${inter.variable}`}>
+    <html lang="tr" className={`${bodoniModa.variable} ${plusJakartaSans.variable}`}>
       <body>
         <PageLoader />
         <CustomCursor />
