@@ -26,8 +26,9 @@
 }
 
 .footBrand p {
-  font-family: var(--sans);
-  font-size: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
   color: var(--muted);
   margin-top: 16px;
   line-height: 1.7;

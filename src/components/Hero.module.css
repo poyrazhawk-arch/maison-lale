@@ -151,7 +151,9 @@
 .heroLede {
   max-width: 440px;
   margin: 36px 0 0;
-  font-size: 15px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
   line-height: 1.75;
   color: var(--ink-2);
   animation: fade 0.8s 0.7s both;

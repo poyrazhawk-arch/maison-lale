@@ -115,7 +115,9 @@
 }
 
 .note {
-  font-size: 12px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
   color: rgba(244, 236, 220, 0.55);
   letter-spacing: 0.04em;
   max-width: 380px;

@@ -75,7 +75,9 @@
 
 .svcBody p {
   margin: 0;
-  font-size: 13px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
   color: var(--muted);
   line-height: 1.55;
 }

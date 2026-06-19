@@ -47,7 +47,7 @@ export default function SalonAbout({ salon }: { salon: Salon }) {
           <div className={styles.aboutMeta}>
             {salon.rating && (
               <div className={styles.m}>
-                <span className={styles.n}>{salon.rating}★</span>
+                <span className={styles.n}>{salon.rating}</span>
                 <span className={styles.l}>Google Puanı</span>
               </div>
             )}
