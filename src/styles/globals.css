@@ -9,8 +9,8 @@
   --gold: #B8894A;
   --gold-2: #9C7237;
   --line: rgba(31, 26, 20, 0.18);
-  --serif: "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --sans: "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --serif: var(--font-serif), "Cormorant Garamond", "Times New Roman", serif;
+  --sans: var(--font-sans), "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 }
 
 *, *::before, *::after {
