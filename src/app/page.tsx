@@ -3,7 +3,7 @@ import Hero from '@/components/Hero';
 import Marquee from '@/components/Marquee';
 import Services from '@/components/Services';
 import About from '@/components/About';
-import Booking from '@/components/Booking';
+import WhatsAppBooking from '@/components/WhatsAppBooking';
 import Testimonials from '@/components/Testimonials';
 import Footer from '@/components/Footer';
 import ScrollReveal from '@/components/ScrollReveal';
@@ -17,7 +17,7 @@ export default function Home() {
       <Marquee />
       <Services />
       <About />
-      <Booking />
+      <WhatsAppBooking whatsappPhone="902122000000" salonName="Maison Lale" />
       <Testimonials />
       <Footer />
     </>
