@@ -173,6 +173,45 @@
   width: 26px;
 }
 
+.sectionNum {
+  color: var(--gold);
+}
+
+.sectionTitle {
+  color: var(--cream);
+}
+
+.sectionTitleEm {
+  color: var(--gold);
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  color: rgba(244, 236, 220, 0.7);
+}
+
+.calLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid rgba(184, 137, 74, 0.4);
+  padding-bottom: 3px;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.calLink:hover {
+  border-color: var(--gold);
+  color: #cc9a55;
+}
+
 .calCta {
   border-top: 1px solid rgba(244, 236, 220, 0.18);
   padding-top: 48px;

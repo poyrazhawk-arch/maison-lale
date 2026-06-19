@@ -45,22 +45,14 @@ export default function WhatsAppBooking({ whatsappPhone, salonName }: Props) {
       <div className="container">
         <div className="sec-head">
           <div className="left">
-            <div className="sec-num" style={{ color: 'var(--gold)' }}>— N°03 / Randevu</div>
-            <h2 className="sec-title" style={{ color: 'var(--cream)' }}>
-              Sizi <em style={{ color: 'var(--gold)' }}>bekliyoruz.</em>
+            <div className={`sec-num ${styles.sectionNum}`}>— N°03 / Randevu</div>
+            <h2 className={`sec-title ${styles.sectionTitle}`}>
+              Sizi <em className={styles.sectionTitleEm}>bekliyoruz.</em>
             </h2>
           </div>
-          <div className="right" style={{ color: 'rgba(244,236,220,0.7)', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
+          <div className={`right ${styles.rightCol}`}>
             Formu doldurun; randevu detaylarınız WhatsApp üzerinden anında iletilsin.
-            <a
-              href="/randevular"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontSize: '12px', letterSpacing: '0.18em', textTransform: 'uppercase',
-                color: 'var(--gold)', borderBottom: '1px solid rgba(184,137,74,0.4)',
-                paddingBottom: '3px', transition: 'border-color 0.25s',
-              }}
-            >
+            <a href="/randevular" className={styles.calLink}>
               Online Takvimden Randevu Al →
             </a>
           </div>
