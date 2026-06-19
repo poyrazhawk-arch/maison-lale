@@ -92,7 +92,9 @@
 }
 
 .aboutText p:not(.infoItem) {
-  font-size: 15px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
   line-height: 1.8;
   color: var(--ink-2);
   margin: 0 0 18px;
@@ -100,8 +102,9 @@
 }
 
 .infoItem {
-  font-family: var(--sans) !important;
-  font-size: 13px !important;
+  font-family: var(--serif) !important;
+  font-style: italic;
+  font-size: 15px !important;
   line-height: 1.75;
   color: var(--muted);
   letter-spacing: 0.02em;
@@ -109,8 +112,9 @@
 }
 
 .infoHours {
-  font-family: var(--sans);
-  font-size: 13px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
   line-height: 1.75;
   color: var(--muted);
   letter-spacing: 0.02em;
