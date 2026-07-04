@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
 import styles from './PageLoader.module.css';
 
 export default function PageLoader() {
   const loaderRef = useRef<HTMLDivElement>(null);
+  const isKoc = usePathname()?.startsWith('/koc');
 
   useEffect(() => {
     const el = loaderRef.current;
@@ -20,6 +22,8 @@ export default function PageLoader() {
       onComplete: () => { el.style.display = 'none'; },
     });
   }, []);
+
+  if (isKoc) return null;
 
   return (
     <div ref={loaderRef} className={styles.loader}>

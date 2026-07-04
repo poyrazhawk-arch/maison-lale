@@ -1,0 +1,24 @@
+{
+  "name": "KOÇ — Kişisel Kalori Koçu",
+  "short_name": "KOÇ",
+  "description": "Koruma kalorisi ve vücut kompozisyonu takibi",
+  "start_url": "/koc",
+  "scope": "/koc",
+  "display": "standalone",
+  "background_color": "#0c0d0b",
+  "theme_color": "#0c0d0b",
+  "icons": [
+    {
+      "src": "/koc-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/koc-icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

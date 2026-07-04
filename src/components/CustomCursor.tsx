@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
 import styles from './CustomCursor.module.css';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
+  const isKoc = usePathname()?.startsWith('/koc');
 
   useEffect(() => {
     const cursor = cursorRef.current;
@@ -33,6 +35,8 @@ export default function CustomCursor() {
       document.removeEventListener('mousemove', onMove);
     };
   }, []);
+
+  if (isKoc) return null;
 
   return <div ref={cursorRef} className={styles.cursor} />;
 }
