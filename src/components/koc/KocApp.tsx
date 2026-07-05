@@ -6,6 +6,7 @@ import {
   COLLECTION_DAYS,
   DEFAULT_SETTINGS,
   estimateMaintenance,
+  mergeSeedEntries,
   sortEntries,
   todayStr,
   type DayEntry,
@@ -17,6 +18,7 @@ import styles from './Koc.module.css';
 
 const ENTRIES_KEY = 'koc.entries.v1';
 const SETTINGS_KEY = 'koc.settings.v1';
+const SEED_FLAG = 'koc.seeded.v1';
 
 const LEVEL_META: Record<MsgLevel, { icon: string; label: string }> = {
   good: { icon: '✓', label: 'İyi' },
@@ -68,13 +70,20 @@ function num(s: string): number | undefined {
 }
 
 function loadEntries(): DayEntry[] {
+  let entries: DayEntry[] = [];
   try {
     const raw = localStorage.getItem(ENTRIES_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) entries = JSON.parse(raw);
   } catch {
     // bozuk veri — boş başla
   }
-  return [];
+  // Uygulama öncesi hafta bir kereliğine geçmiş olarak eklenir.
+  if (!localStorage.getItem(SEED_FLAG)) {
+    entries = mergeSeedEntries(entries);
+    localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
+    localStorage.setItem(SEED_FLAG, '1');
+  }
+  return entries;
 }
 
 function loadSettings(): Settings {
@@ -186,7 +195,7 @@ export default function KocApp() {
   const resetAll = () => {
     if (!confirm('TÜM veriler silinecek. Emin misin?')) return;
     if (!confirm('Son kez soruyorum: her şey silinsin mi?')) return;
-    setEntries([]);
+    setEntries(mergeSeedEntries([])); // fabrika durumu: uygulama öncesi hafta dahil
     setSettings(DEFAULT_SETTINGS);
   };
 

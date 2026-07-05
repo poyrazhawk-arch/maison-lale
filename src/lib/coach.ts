@@ -54,6 +54,32 @@ export function sortEntries(entries: DayEntry[]): DayEntry[] {
   return [...entries].sort((a, b) => a.date.localeCompare(b.date));
 }
 
+// Kullanıcının uygulama öncesi haftası (28 Haz – 4 Tem 2026): 2650 kcal,
+// 160P/296K/78Y, ~22.500 adım, 71 kg sabit. İlk açılışta geçmiş olarak yüklenir.
+export const SEED_ENTRIES: DayEntry[] = [
+  '2026-06-28',
+  '2026-06-29',
+  '2026-06-30',
+  '2026-07-01',
+  '2026-07-02',
+  '2026-07-03',
+  '2026-07-04',
+].map(date => ({
+  date,
+  weight: 71,
+  kcal: 2650,
+  protein: 160,
+  carb: 296,
+  fat: 78,
+  steps: 22500,
+}));
+
+/** Tohum kayıtları, kullanıcının kendi girdiği günleri ezmeden birleştirir. */
+export function mergeSeedEntries(entries: DayEntry[]): DayEntry[] {
+  const have = new Set(entries.map(e => e.date));
+  return [...entries, ...SEED_ENTRIES.filter(s => !have.has(s.date))];
+}
+
 export interface TrendPoint {
   date: string;
   weight: number;
@@ -90,6 +116,22 @@ export interface MaintenanceEstimate {
   latestBodyFat: { date: string; value: number } | null;
 }
 
+/** Trend noktaları üzerinde doğrusal regresyon → kg/gün eğim. */
+function trendSlopePerDay(points: TrendPoint[]): number {
+  const xs = points.map(p => dayIndex(p.date));
+  const ys = points.map(p => p.trend);
+  const n = xs.length;
+  const mx = xs.reduce((a, b) => a + b, 0) / n;
+  const my = ys.reduce((a, b) => a + b, 0) / n;
+  let cov = 0;
+  let varx = 0;
+  for (let i = 0; i < n; i++) {
+    cov += (xs[i] - mx) * (ys[i] - my);
+    varx += (xs[i] - mx) ** 2;
+  }
+  return varx === 0 ? 0 : cov / varx;
+}
+
 function katchGuess(weightKg: number, avgSteps: number | null): number {
   // Yağ oranını ~%12 varsayan Katch-McArdle + adım bazlı aktivite çarpanı.
   const lbm = weightKg * 0.88;
@@ -123,7 +165,15 @@ export function estimateMaintenance(entries: DayEntry[], settings: Settings): Ma
       ? { date: bfEntries[bfEntries.length - 1].date, value: bfEntries[bfEntries.length - 1].bodyFat! }
       : null;
 
-  const roughGuess = katchGuess(lastWeight, avgStepsAll);
+  // Kaba tahmin: 5+ tam gün varsa formül yerine gerçek alım + kilo gidişatı
+  // kullanılır (kilo sabitse ortalama alım ≈ koruma kalorisi).
+  let roughGuess = katchGuess(lastWeight, avgStepsAll);
+  if (complete.length >= 5) {
+    const avgK = complete.reduce((s, e) => s + e.kcal!, 0) / complete.length;
+    const slope = trend.length >= 5 ? trendSlopePerDay(trend.slice(-14)) : 0;
+    const guess = Math.min(4500, Math.max(1200, avgK - slope * KCAL_PER_KG));
+    roughGuess = Math.round(guess / 10) * 10;
+  }
 
   const base: MaintenanceEstimate = {
     ready: false,
@@ -153,19 +203,7 @@ export function estimateMaintenance(entries: DayEntry[], settings: Settings): Ma
   const span = dayIndex(winTrend[winTrend.length - 1].date) - dayIndex(winTrend[0].date);
   if (span < 10) return base;
 
-  // Trend kilo üzerinde doğrusal regresyon → kg/gün eğim.
-  const xs = winTrend.map(p => dayIndex(p.date));
-  const ys = winTrend.map(p => p.trend);
-  const n = xs.length;
-  const mx = xs.reduce((a, b) => a + b, 0) / n;
-  const my = ys.reduce((a, b) => a + b, 0) / n;
-  let cov = 0;
-  let varx = 0;
-  for (let i = 0; i < n; i++) {
-    cov += (xs[i] - mx) * (ys[i] - my);
-    varx += (xs[i] - mx) ** 2;
-  }
-  const slopePerDay = varx === 0 ? 0 : cov / varx;
+  const slopePerDay = trendSlopePerDay(winTrend);
 
   const avgKcal = winKcal.reduce((s, e) => s + e.kcal!, 0) / winKcal.length;
 
@@ -242,7 +280,10 @@ export function buildCoachPlan(
     });
     msgs.push({
       level: 'info',
-      text: `Şimdilik kaba hedef ~${est.roughGuess} kcal. Bu dönemde kaloriyi sabit tutmaya çalış — tahmin o kadar isabetli çıkar.`,
+      text:
+        est.loggedDays >= 5
+          ? `Geçici hedef ~${est.roughGuess} kcal — kayıtlı günlerdeki gerçek alımına ve kilo gidişatına göre kalibre edildi. Bu bantta sabit kal.`
+          : `Şimdilik kaba hedef ~${est.roughGuess} kcal. Bu dönemde kaloriyi sabit tutmaya çalış — tahmin o kadar isabetli çıkar.`,
     });
     msgs.push({
       level: 'info',
