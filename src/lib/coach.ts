@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   bfGoalBulk: 12,
 };
 
-export const COLLECTION_DAYS = 14; // maintenance tahmini için gereken minimum gün
+export const COLLECTION_DAYS = 21; // maintenance tahmini için gereken minimum gün
 const KCAL_PER_KG = 7700; // 1 kg vücut ağırlığı ≈ 7700 kcal
 const EMA_ALPHA = 0.3; // trend kilo yumuşatma katsayısı
 const WINDOW_DAYS = 28; // adaptif tahmin penceresi
